@@ -110,14 +110,52 @@ async def send_tips(message: Message):
    tip = random.choice(tips)
    await message.answer(tip)
 
+#Создание функции личных финансов
+@dp.message(F.text == "Личные финансы")
+async def finances(message: Message, state: FSMContext):
+   await state.set_state(FinancesForm.category1)
+   await message.reply("Введите первую категорию расходов:")
 
+@dp.message(FinancesForm.category1)
+async def finances(message: Message, state: FSMContext):
+   await state.update_data(category1 = message.text)
+   await state.set_state(FinancesForm.expenses1)
+   await message.reply("Введите расходы для категории 1:")
 
+@dp.message(FinancesForm.expenses1)
+async def finances(message: Message, state: FSMContext):
+   await state.update_data(expenses1 = float(message.text))
+   await state.set_state(FinancesForm.category2)
+   await message.reply("Введите вторую категорию расходов:")
 
+@dp.message(FinancesForm.category2)
+async def finances(message: Message, state: FSMContext):
+   await state.update_data(category2 = message.text)
+   await state.set_state(FinancesForm.expenses2)
+   await message.reply("Введите расходы для категории 2:")
 
+@dp.message(FinancesForm.expenses2)
+async def finances(message: Message, state: FSMContext):
+   await state.update_data(expenses2 = float(message.text))
+   await state.set_state(FinancesForm.category3)
+   await message.reply("Введите третью категорию расходов:")
 
+@dp.message(FinancesForm.category3)
+async def finances(message: Message, state: FSMContext):
+   await state.update_data(category3 = message.text)
+   await state.set_state(FinancesForm.expenses3)
+   await message.reply("Введите расходы для категории 3:")
 
+@dp.message(FinancesForm.expenses3)
+async def finances(message: Message, state: FSMContext):
+   data = await state.get_data()
+   telegarm_id = message.from_user.id
+   cursor.execute('''UPDATE users SET category1 = ?, expenses1 = ?, category2 = ?, expenses2 = ?, category3 = ?, expenses3 = ? WHERE telegram_id = ?''',
+                  (data['category1'], data['expenses1'], data['category2'], data['expenses2'], data['category3'], float(message.text), telegarm_id))
+   conn.commit()
+   await state.clear()
 
-
+   await message.answer("Категории и расходы сохранены!")
 
 
 
