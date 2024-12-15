@@ -100,15 +100,6 @@ async def exchange_rates(message: Message):
        await message.answer("Произошла ошибка")
 
 #Создание функции советов по экономике
-@dp.message(F.text == "Советы по экономии")
-async def send_tips(message: Message):
-   tips = [
-       "Совет 1: Ведите бюджет и следите за своими расходами.",
-       "Совет 2: Откладывайте часть доходов на сбережения.",
-       "Совет 3: Покупайте товары по скидкам и распродажам."
-   ]
-   tip = random.choice(tips)
-   await message.answer(tip)
 
 
 
