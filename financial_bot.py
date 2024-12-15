@@ -28,7 +28,7 @@ button_tips = KeyboardButton(text="Советы по экономии")
 button_finances = KeyboardButton(text="Личные финансы")
 
 keyboards = ReplyKeyboardMarkup(keyboard=[
-   [button_registr, button_exchange_rates],
+   [button_register, button_exchange_rates],
    [button_tips, button_finances]
    ], resize_keyboard=True)
 #Создание таблицы в базе данных
@@ -58,8 +58,24 @@ class FinancesForm(StatesGroup):
    expenses2 = State()
    category3 = State()
    expenses3 = State()
+#Команда /start
+@dp.message(CommandStart())
+async def process_start_command(message: Message):
+   await message.answer(f"Привет! Я ваш личный финансовый помощник. Выберите одну из опций в меню:", reply_markup=keyboards)
 
-
+#Команда регистрации
+@dp.message(F.text == "Регистрация в телеграм боте")
+async def registration(message: Message):
+   telegram_id = message.from_user.id
+   name = message.from_user.full_name
+   cursor.execute('''SELECT * FROM users WHERE telegram_id = ?''', (telegram_id,))
+   user = cursor.fetchone()
+   if user:
+       await message.answer("Вы уже зарегистрированы!")
+   else:
+       cursor.execute('''INSERT INTO users (telegram_id, name) VALUES (?, ?)''', (telegram_id, name))
+       conn.commit()
+       await message.answer("Вы успешно зарегистрированы!")
 
 
 
