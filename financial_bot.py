@@ -20,6 +20,12 @@ import requests
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
+logging.basicConfig(level=logging.INFO)
+ 
+button_register = KeyboardButton(text="Регистрация в телеграм боте")
+
+
+
 
 
 
